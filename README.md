@@ -12,13 +12,23 @@ raise a GitHub issue or open a pull request with a fix.
 
 As in previous assignments, we use `uv` to manage dependencies.
 
-1. Install all packages except `flash-attn`, then all packages (`flash-attn` is weird)
-```
+1. Install all packages except `flash-attn`.
+
+```sh
 uv sync --no-install-package flash-attn
+```
+
+2. (Optional) Install `flash-attn` after CUDA toolkit is available in Linux (`nvcc` must be on `PATH`).
+
+On WSL2, having CUDA installed on Windows is not enough for building Linux wheels: you also need CUDA toolkit installed inside WSL, and `CUDA_HOME` set.
+
+```sh
+export CUDA_HOME=/usr/local/cuda
+export PATH="$CUDA_HOME/bin:$PATH"
 uv sync
 ```
 
-2. Run unit tests:
+3. Run unit tests:
 
 ``` sh
 uv run pytest
