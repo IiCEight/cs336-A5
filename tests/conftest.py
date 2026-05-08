@@ -215,12 +215,12 @@ def model_id():
 
 @pytest.fixture
 def tokenizer(model_id):
-    return AutoTokenizer.from_pretrained(model_id, local_files_only=True)
+    return AutoTokenizer.from_pretrained(Path(model_id))
 
 
 @pytest.fixture
 def model(model_id):
-    return AutoModelForCausalLM.from_pretrained(model_id, local_files_only=True)
+    return AutoModelForCausalLM.from_pretrained(Path(model_id))
 
 
 @pytest.fixture
