@@ -210,17 +210,17 @@ def output_strs():
 
 @pytest.fixture
 def model_id():
-    return "/data/a5-alignment/models/Qwen2.5-Math-1.5B"
+    return Path(__file__).resolve().parent.parent / "Qwen2.5-Math-1.5B"
 
 
 @pytest.fixture
 def tokenizer(model_id):
-    return AutoTokenizer.from_pretrained(Path(model_id))
+    return AutoTokenizer.from_pretrained(model_id)
 
 
 @pytest.fixture
 def model(model_id):
-    return AutoModelForCausalLM.from_pretrained(Path(model_id))
+    return AutoModelForCausalLM.from_pretrained(model_id)
 
 
 @pytest.fixture
