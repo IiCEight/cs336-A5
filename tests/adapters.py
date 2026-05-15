@@ -66,7 +66,7 @@ def run_compute_group_normalized_rewards(
 
 def run_compute_entropy(logits: torch.Tensor) -> torch.Tensor:
     """Get the entropy of the logits (i.e., entropy of the final dimension)."""
-    from cs336_alignment.tokenize import compute_entropy
+    from cs336_alignment.log_probs import compute_entropy
     return compute_entropy(logits)
 
 
@@ -76,7 +76,7 @@ def run_get_response_log_probs(
     labels: torch.Tensor,
     return_token_entropy: bool,
 ) -> torch.Tensor:
-    from cs336_alignment.tokenize import get_response_log_probs
+    from cs336_alignment.log_probs import get_response_log_probs
     return get_response_log_probs(model, input_ids, labels, return_token_entropy)
 
 
@@ -166,7 +166,7 @@ def run_sft_microbatch_train_step(
 ) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
     """Compute the policy gradient loss and backprop its gradients for a microbatch.
     """
-    from cs336_alignment.tokenize import sft_microbatch_train_step
+    from cs336_alignment.train_utils import sft_microbatch_train_step
     return sft_microbatch_train_step(policy_log_probs, response_mask, gradient_accumulation_steps, normalize_constant)
 
     
@@ -215,7 +215,7 @@ def run_masked_normalize(
     dim: int | None = None,
     normalize_constant: float = 1.0,
 ) -> torch.Tensor:
-    from cs336_alignment.tokenize import masked_normalize
+    from cs336_alignment.train_utils import masked_normalize
     return masked_normalize(tensor, mask, dim=dim, normalize_constant=normalize_constant)
 
 
@@ -252,7 +252,8 @@ def get_packed_sft_dataset(
         "input_ids" contains the token IDs for the language modeling inputs, and "labels" contains
         the token IDs for the language modeling labels.
     """
-    raise NotImplementedError
+    from cs336_alignment.dataset import get_packed_sft_dataset
+    return get_packed_sft_dataset(tokenizer, dataset_path, seq_length, shuffle)
 
 
 def run_iterate_batches(
@@ -275,7 +276,8 @@ def run_iterate_batches(
     Returns:
         Iterable over batches, where each batch has size `batch_size`.
     """
-    raise NotImplementedError
+    from cs336_alignment.dataset import iterate_batches
+    return iterate_batches(dataset, batch_size, shuffle)
 
 
 def run_parse_mmlu_response(
