@@ -77,6 +77,23 @@ def _load_val_examples(
     return result
 
 
+def _gsm8k_to_r1_format(answer: str) -> str:
+    """Convert a GSM8K answer to R1-zero format.
+
+    GSM8K: "step1\nstep2\n#### 72"
+    R1:    " step1\nstep2\n</think> <answer>72</answer>"
+    """
+    sep = "####"
+    if sep in answer:
+        reasoning, number = answer.rsplit(sep, 1)
+        number = number.strip().replace(",", "")
+        reasoning = reasoning.rstrip()
+    else:
+        reasoning = answer
+        number = answer.strip()
+    return f" {reasoning}</think> <answer>{number}</answer>"
+
+
 @app.command()
 def main(
     model_path: Path = typer.Option(DEFAULT_MODEL_PATH, help="Policy model path."),
@@ -126,7 +143,6 @@ def main(
     model = AutoModelForCausalLM.from_pretrained(
         Path(model_path),
         torch_dtype=torch.bfloat16,
-        attn_implementation="flash_attention_2",
     )
     model = model.to(policy_device)
     model.train()
@@ -175,7 +191,7 @@ def main(
                 response_strs = [ex["response"] for ex in batch_examples]
             else:
                 prompt_strs = [prompt_template.format(question=ex["question"]) for ex in batch_examples]
-                response_strs = [ex["answer"] for ex in batch_examples]
+                response_strs = [_gsm8k_to_r1_format(ex["answer"]) for ex in batch_examples]
 
             # Tokenize prompt+response, get response_mask for loss masking
             tokenized = tokenize_prompt_and_output(prompt_strs, response_strs, tokenizer)
