@@ -169,5 +169,6 @@ cython_debug/
 
 .worktrees/
 Qwen2.5-Math-1.5B/
-output/
+outputs/
 out.txt
+wandb/
